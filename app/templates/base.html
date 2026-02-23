@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}The Live Sports Lounge{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/static/css/custom.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { DEFAULT: '#1e3a5f', light: '#2d5a8e', dark: '#0f1f33' },
+                        accent: '#f59e0b',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="h-full bg-gray-100 text-gray-900 flex flex-col">
+    <!-- Nav -->
+    <nav class="bg-brand text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+            <a href="/" class="text-xl font-bold tracking-tight hover:text-accent transition">
+                The Live Sports Lounge
+            </a>
+            <div class="flex gap-6 text-sm font-medium">
+                <a href="/" class="hover:text-accent transition">Scores</a>
+                <a href="/about" class="hover:text-accent transition">About</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Content -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 py-6">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-brand-dark text-gray-400 text-xs text-center py-4">
+        &copy; 2026 The Live Sports Lounge &mdash; Real-time play-by-play coverage
+    </footer>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,21 @@
+/* Smooth score transitions */
+.tabular-nums {
+    font-variant-numeric: tabular-nums;
+}
+
+/* PBP feed scroll */
+#pbp-feed::-webkit-scrollbar {
+    width: 6px;
+}
+#pbp-feed::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+}
+
+/* Game card hover lift */
+.game-card {
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.game-card:hover {
+    transform: translateY(-2px);
+}

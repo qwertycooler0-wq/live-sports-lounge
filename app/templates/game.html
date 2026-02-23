@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+{% block title %}{{ game.summary.away_team }} @ {{ game.summary.home_team }} — The Live Sports Lounge{% endblock %}
+
+{% block content %}
+<div id="game-container" data-game-id="{{ game.summary.game_id }}">
+
+    <!-- Header: score banner -->
+    <div class="bg-white rounded-xl shadow p-6 mb-6">
+        <div class="flex items-center justify-between mb-2">
+            <span id="game-status" class="text-sm font-semibold uppercase tracking-wide
+                {% if game.summary.status == 'live' %}text-red-600{% elif game.summary.status == 'final' %}text-gray-500{% else %}text-blue-600{% endif %}">
+                {% if game.summary.status == 'live' %}
+                    <span class="inline-block w-2 h-2 bg-red-500 rounded-full mr-1 animate-pulse"></span>
+                    <span id="period-clock">Q{{ game.summary.period }} {{ game.summary.clock }}</span>
+                {% elif game.summary.status == 'final' %}
+                    Final
+                {% else %}
+                    {{ game.summary.start_time }}
+                {% endif %}
+            </span>
+            <span class="text-xs text-gray-400 uppercase">{{ game.summary.sport }}</span>
+        </div>
+        <div class="grid grid-cols-3 items-center text-center">
+            <div>
+                <div class="text-lg font-bold">{{ game.summary.away_team }}</div>
+                <div id="away-score" class="text-4xl font-extrabold tabular-nums">{{ game.summary.away_score }}</div>
+            </div>
+            <div class="text-gray-400 text-2xl font-light">@</div>
+            <div>
+                <div class="text-lg font-bold">{{ game.summary.home_team }}</div>
+                <div id="home-score" class="text-4xl font-extrabold tabular-nums">{{ game.summary.home_score }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabs: PBP / Box Score / Team Stats -->
+    <div class="mb-4 flex gap-2 border-b border-gray-200">
+        <button class="tab-btn px-4 py-2 text-sm font-medium border-b-2 border-brand text-brand" data-tab="pbp">Play-by-Play</button>
+        <button class="tab-btn px-4 py-2 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700" data-tab="boxscore">Box Score</button>
+        <button class="tab-btn px-4 py-2 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700" data-tab="teamstats">Team Stats</button>
+    </div>
+
+    <!-- PBP panel -->
+    <div id="tab-pbp" class="tab-panel">
+        <div id="pbp-feed" class="bg-white rounded-xl shadow divide-y divide-gray-100 max-h-[600px] overflow-y-auto">
+            {% for e in game.play_by_play %}
+            <div class="px-4 py-3 flex items-start gap-3 text-sm">
+                <span class="text-gray-400 tabular-nums whitespace-nowrap w-16 shrink-0">Q{{ e.period }} {{ e.clock }}</span>
+                <span class="font-semibold text-xs uppercase w-12 shrink-0
+                    {% if e.team == game.summary.home_team[:3].upper() or e.team == game.summary.home_team.split()[-1][:3].upper() %}text-blue-600{% else %}text-red-600{% endif %}">
+                    {{ e.team }}
+                </span>
+                <span class="flex-1">{{ e.description }}</span>
+                <span class="text-gray-500 tabular-nums whitespace-nowrap">{{ e.away_score }}-{{ e.home_score }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Box Score panel -->
+    <div id="tab-boxscore" class="tab-panel hidden">
+        <!-- Sub-tabs: Away / Home -->
+        <div class="flex gap-2 mb-3">
+            <button class="box-tab-btn px-3 py-1 text-xs font-semibold rounded-full bg-brand text-white" data-box="away">{{ game.summary.away_team }}</button>
+            <button class="box-tab-btn px-3 py-1 text-xs font-semibold rounded-full bg-white text-gray-600 hover:bg-gray-200" data-box="home">{{ game.summary.home_team }}</button>
+        </div>
+
+        <div id="box-away" class="box-panel">
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead class="bg-gray-50 text-left text-xs uppercase text-gray-500">
+                        <tr>
+                            <th class="px-3 py-2">Player</th>
+                            <th class="px-3 py-2">MIN</th>
+                            <th class="px-3 py-2">PTS</th>
+                            <th class="px-3 py-2">REB</th>
+                            <th class="px-3 py-2">AST</th>
+                            <th class="px-3 py-2">STL</th>
+                            <th class="px-3 py-2">BLK</th>
+                            <th class="px-3 py-2">FG</th>
+                            <th class="px-3 py-2">3PT</th>
+                            <th class="px-3 py-2">FT</th>
+                            <th class="px-3 py-2">+/-</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        {% for p in game.away_players %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-3 py-2 font-medium whitespace-nowrap">{{ p.name }} <span class="text-gray-400 text-xs">{{ p.position }}</span></td>
+                            <td class="px-3 py-2 tabular-nums">{{ p.minutes }}</td>
+                            <td class="px-3 py-2 font-semibold tabular-nums">{{ p.points }}</td>
+                            <td class="px-3 py-2 tabular-nums">{{ p.rebounds }}</td>
+                            <td class="px-3 py-2 tabular-nums">{{ p.assists }}</td>
+                            <td class="px-3 py-2 tabular-nums">{{ p.steals }}</td>
+                            <td class="px-3 py-2 tabular-nums">{{ p.blocks }}</td>
+                            <td class="px-3 py-2 tabular-nums">{{ p.fg }}</td>
+                            <td class="px-3 py-2 tabular-nums">{{ p.three_pt }}</td>
+                            <td class="px-3 py-2 tabular-nums">{{ p.ft }}</td>
+                            <td class="px-3 py-2 tabular-nums {% if p.plus_minus > 0 %}text-green-600{% elif p.plus_minus < 0 %}text-red-600{% endif %}">
+                                {% if p.plus_minus > 0 %}+{% endif %}{{ p.plus_minus }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="box-home" class="box-panel hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead class="bg-gray-50 text-left text-xs uppercase text-gray-500">
+                        <tr>
+                            <th class="px-3 py-2">Player</th>
+                            <th class="px-3 py-2">MIN</th>
+                            <th class="px-3 py-2">PTS</th>
+                            <th class="px-3 py-2">REB</th>
+                            <th class="px-3 py-2">AST</th>
+                            <th class="px-3 py-2">STL</th>
+                            <th class="px-3 py-2">BLK</th>
+                            <th class="px-3 py-2">FG</th>
+                            <th class="px-3 py-2">3PT</th>
+                            <th class="px-3 py-2">FT</th>
+                            <th class="px-3 py-2">+/-</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        {% for p in game.home_players %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-3 py-2 font-medium whitespace-nowrap">{{ p.name }} <span class="text-gray-400 text-xs">{{ p.position }}</span></td>
+                            <td class="px-3 py-2 tabular-nums">{{ p.minutes }}</td>
+                            <td class="px-3 py-2 font-semibold tabular-nums">{{ p.points }}</td>
+                            <td class="px-3 py-2 tabular-nums">{{ p.rebounds }}</td>
+                            <td class="px-3 py-2 tabular-nums">{{ p.assists }}</td>
+                            <td class="px-3 py-2 tabular-nums">{{ p.steals }}</td>
+                            <td class="px-3 py-2 tabular-nums">{{ p.blocks }}</td>
+                            <td class="px-3 py-2 tabular-nums">{{ p.fg }}</td>
+                            <td class="px-3 py-2 tabular-nums">{{ p.three_pt }}</td>
+                            <td class="px-3 py-2 tabular-nums">{{ p.ft }}</td>
+                            <td class="px-3 py-2 tabular-nums {% if p.plus_minus > 0 %}text-green-600{% elif p.plus_minus < 0 %}text-red-600{% endif %}">
+                                {% if p.plus_minus > 0 %}+{% endif %}{{ p.plus_minus }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Team Stats panel -->
+    <div id="tab-teamstats" class="tab-panel hidden">
+        <div class="grid sm:grid-cols-2 gap-4">
+            <!-- Away team stats -->
+            <div class="bg-white rounded-xl shadow p-4">
+                <h3 class="font-bold text-sm mb-3">{{ game.summary.away_team }}</h3>
+                <dl class="space-y-1 text-sm">
+                    {% for key, val in game.away_team_stats.items() %}
+                    <div class="flex justify-between">
+                        <dt class="text-gray-500">{{ key }}</dt>
+                        <dd class="font-medium tabular-nums">{{ val }}</dd>
+                    </div>
+                    {% endfor %}
+                </dl>
+            </div>
+            <!-- Home team stats -->
+            <div class="bg-white rounded-xl shadow p-4">
+                <h3 class="font-bold text-sm mb-3">{{ game.summary.home_team }}</h3>
+                <dl class="space-y-1 text-sm">
+                    {% for key, val in game.home_team_stats.items() %}
+                    <div class="flex justify-between">
+                        <dt class="text-gray-500">{{ key }}</dt>
+                        <dd class="font-medium tabular-nums">{{ val }}</dd>
+                    </div>
+                    {% endfor %}
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/game.js"></script>
+{% endblock %}
