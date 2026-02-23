@@ -1,21 +1,91 @@
-/* Smooth score transitions */
+/* ── Tabular nums ──────────────────────────────────────────────── */
 .tabular-nums {
     font-variant-numeric: tabular-nums;
 }
 
-/* PBP feed scroll */
+/* ── Dark scrollbar ───────────────────────────────────────────── */
 #pbp-feed::-webkit-scrollbar {
     width: 6px;
 }
+#pbp-feed::-webkit-scrollbar-track {
+    background: transparent;
+}
 #pbp-feed::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
+    background: #334155;
     border-radius: 3px;
 }
+#pbp-feed::-webkit-scrollbar-thumb:hover {
+    background: #475569;
+}
 
-/* Game card hover lift */
+/* ── Game card hover lift ─────────────────────────────────────── */
 .game-card {
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
 }
 .game-card:hover {
     transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* ── Card entrance animation ──────────────────────────────────── */
+.game-card {
+    animation: cardIn 0.3s ease-out both;
+}
+@keyframes cardIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.game-card:nth-child(1) { animation-delay: 0s; }
+.game-card:nth-child(2) { animation-delay: 0.05s; }
+.game-card:nth-child(3) { animation-delay: 0.1s; }
+.game-card:nth-child(4) { animation-delay: 0.15s; }
+.game-card:nth-child(5) { animation-delay: 0.2s; }
+.game-card:nth-child(6) { animation-delay: 0.25s; }
+.game-card:nth-child(7) { animation-delay: 0.3s; }
+.game-card:nth-child(8) { animation-delay: 0.35s; }
+
+/* ── Score flash animation ────────────────────────────────────── */
+.score-flash {
+    animation: flashScore 0.6s ease-out;
+}
+@keyframes flashScore {
+    0% { color: #f59e0b; transform: scale(1.15); }
+    100% { color: #ffffff; transform: scale(1); }
+}
+
+/* ── Live pulse ───────────────────────────────────────────────── */
+.live-pulse {
+    animation: livePulse 1.5s ease-in-out infinite;
+}
+@keyframes livePulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+/* ── Scoring play highlight ───────────────────────────────────── */
+.scoring-play {
+    border-left: 3px solid #f59e0b;
+    background: rgba(245, 158, 11, 0.04);
+}
+
+/* ── Global dark scrollbar ────────────────────────────────────── */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #0f0f23;
+}
+::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #475569;
 }

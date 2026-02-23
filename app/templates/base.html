@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}The Live Sports Lounge{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/custom.css">
     <script>
         tailwind.config = {
@@ -13,22 +16,29 @@
                     colors: {
                         brand: { DEFAULT: '#1e3a5f', light: '#2d5a8e', dark: '#0f1f33' },
                         accent: '#f59e0b',
-                    }
+                        surface: { DEFAULT: '#16213e', light: '#1a2744', lighter: '#1f2f52' },
+                        dark: { DEFAULT: '#0f0f23', light: '#1a1a2e', lighter: '#25253e' },
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
                 }
             }
         }
     </script>
 </head>
-<body class="h-full bg-gray-100 text-gray-900 flex flex-col">
+<body class="h-full bg-dark text-gray-200 flex flex-col font-sans">
     <!-- Nav -->
-    <nav class="bg-brand text-white shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-            <a href="/" class="text-xl font-bold tracking-tight hover:text-accent transition">
+    <nav class="bg-surface border-b border-white/5 relative">
+        <div class="absolute inset-x-0 bottom-0 h-[2px] bg-gradient-to-r from-accent via-amber-400 to-accent"></div>
+        <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+            <a href="/" class="text-xl font-extrabold tracking-tight text-white hover:text-accent transition">
                 The Live Sports Lounge
             </a>
-            <div class="flex gap-6 text-sm font-medium">
-                <a href="/" class="hover:text-accent transition">Scores</a>
-                <a href="/about" class="hover:text-accent transition">About</a>
+            <div class="flex gap-6 text-sm font-semibold">
+                <a href="/" class="text-gray-300 hover:text-accent transition">Scores</a>
+                <a href="/about" class="text-gray-300 hover:text-accent transition">About</a>
             </div>
         </div>
     </nav>
@@ -39,8 +49,10 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-brand-dark text-gray-400 text-xs text-center py-4">
-        &copy; 2026 The Live Sports Lounge &mdash; Real-time play-by-play coverage
+    <footer class="border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-4 py-5 text-center text-xs text-gray-500">
+            &copy; 2026 The Live Sports Lounge &mdash; Real-time play-by-play coverage
+        </div>
     </footer>
 
     {% block scripts %}{% endblock %}

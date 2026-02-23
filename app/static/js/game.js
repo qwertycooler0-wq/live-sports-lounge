@@ -3,16 +3,20 @@
     const container = document.getElementById("game-container");
     if (!container) return;
     const gameId = container.dataset.gameId;
+    const gameSport = container.dataset.sport;
+
+    let prevHome = null;
+    let prevAway = null;
 
     // ── Tab switching ──────────────────────────────────────────────
     document.querySelectorAll(".tab-btn").forEach(btn => {
         btn.addEventListener("click", () => {
             document.querySelectorAll(".tab-btn").forEach(b => {
-                b.classList.remove("border-brand", "text-brand");
-                b.classList.add("border-transparent", "text-gray-500");
+                b.classList.remove("bg-surface-lighter", "text-white");
+                b.classList.add("text-gray-500");
             });
-            btn.classList.add("border-brand", "text-brand");
-            btn.classList.remove("border-transparent", "text-gray-500");
+            btn.classList.add("bg-surface-lighter", "text-white");
+            btn.classList.remove("text-gray-500");
 
             document.querySelectorAll(".tab-panel").forEach(p => p.classList.add("hidden"));
             document.getElementById(`tab-${btn.dataset.tab}`).classList.remove("hidden");
@@ -23,16 +27,25 @@
     document.querySelectorAll(".box-tab-btn").forEach(btn => {
         btn.addEventListener("click", () => {
             document.querySelectorAll(".box-tab-btn").forEach(b => {
-                b.classList.remove("bg-brand", "text-white");
-                b.classList.add("bg-white", "text-gray-600");
+                b.classList.remove("bg-accent", "text-dark");
+                b.classList.add("bg-surface-light", "text-gray-400");
             });
-            btn.classList.add("bg-brand", "text-white");
-            btn.classList.remove("bg-white", "text-gray-600");
+            btn.classList.add("bg-accent", "text-dark");
+            btn.classList.remove("bg-surface-light", "text-gray-400");
 
             document.querySelectorAll(".box-panel").forEach(p => p.classList.add("hidden"));
             document.getElementById(`box-${btn.dataset.box}`).classList.remove("hidden");
         });
     });
+
+    // ── Scoring play detection ─────────────────────────────────────
+    function isScoringPlay(desc) {
+        if (!desc) return false;
+        const d = desc.toLowerCase();
+        return d.includes("point") || d.includes("dunk") || d.includes("layup")
+            || d.includes("three") || d.includes("3pt") || d.includes("free throw")
+            || d.includes("jumper") || d.includes("hook") || d.includes("tip");
+    }
 
     // ── Live polling ───────────────────────────────────────────────
     async function refresh() {
@@ -42,16 +55,35 @@
             const data = await res.json();
             const s = data.summary;
 
-            // Update scores
+            // Update scores with flash
             const homeScore = document.getElementById("home-score");
             const awayScore = document.getElementById("away-score");
-            if (homeScore) homeScore.textContent = s.home_score;
-            if (awayScore) awayScore.textContent = s.away_score;
+
+            if (homeScore) {
+                if (prevHome !== null && prevHome !== s.home_score) {
+                    homeScore.classList.remove("score-flash");
+                    void homeScore.offsetWidth;
+                    homeScore.classList.add("score-flash");
+                }
+                homeScore.textContent = s.home_score;
+                prevHome = s.home_score;
+            }
+            if (awayScore) {
+                if (prevAway !== null && prevAway !== s.away_score) {
+                    awayScore.classList.remove("score-flash");
+                    void awayScore.offsetWidth;
+                    awayScore.classList.add("score-flash");
+                }
+                awayScore.textContent = s.away_score;
+                prevAway = s.away_score;
+            }
 
             // Update period/clock
             const periodClock = document.getElementById("period-clock");
             if (periodClock && s.status === "live") {
-                const periodLabel = s.sport === "ncaamb" ? (s.period === 1 ? "1H" : "2H") : `Q${s.period}`;
+                const periodLabel = gameSport === "ncaamb"
+                    ? (s.period === 1 ? "1H" : "2H")
+                    : `Q${s.period}`;
                 periodClock.textContent = `${periodLabel} ${s.clock}`;
             }
 
@@ -60,12 +92,13 @@
             if (pbpFeed && data.play_by_play && data.play_by_play.length > 0) {
                 let html = "";
                 data.play_by_play.forEach(e => {
+                    const scoring = isScoringPlay(e.description) ? "scoring-play" : "";
                     html += `
-                    <div class="px-4 py-3 flex items-start gap-3 text-sm">
-                        <span class="text-gray-400 tabular-nums whitespace-nowrap w-16 shrink-0">Q${e.period} ${e.clock}</span>
-                        <span class="font-semibold text-xs uppercase w-12 shrink-0">${e.team}</span>
-                        <span class="flex-1">${e.description}</span>
-                        <span class="text-gray-500 tabular-nums whitespace-nowrap">${e.away_score}-${e.home_score}</span>
+                    <div class="px-4 py-3 flex items-start gap-3 text-sm ${scoring}">
+                        <span class="text-gray-500 font-mono text-xs whitespace-nowrap w-16 shrink-0 pt-0.5">Q${e.period} ${e.clock}</span>
+                        <span class="font-bold text-xs uppercase w-12 shrink-0 pt-0.5">${e.team}</span>
+                        <span class="flex-1 text-gray-300">${e.description}</span>
+                        <span class="text-gray-500 font-mono text-xs whitespace-nowrap pt-0.5">${e.away_score}-${e.home_score}</span>
                     </div>`;
                 });
                 pbpFeed.innerHTML = html;
