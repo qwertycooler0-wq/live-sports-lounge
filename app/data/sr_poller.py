@@ -19,11 +19,10 @@ from .sr_cache import cache
 
 log = logging.getLogger("sr_poller")
 
-# SR API base URLs by sport
-_BASE_URLS = {
-    "nba": "https://api.sportradar.com/nba/trial/v8/en",
-    "ncaamb": "https://api.sportradar.com/ncaamb/trial/v8/en",
-}
+# SR API base URLs by sport (tier from config)
+def _base_url(sport: str) -> str:
+    tier = config.SR_TIER  # "trial" or "production"
+    return f"https://api.sportradar.com/{sport}/{tier}/v8/en"
 
 
 class RateLimiter:
@@ -105,9 +104,7 @@ class SRPoller:
     async def poll_schedule(self, sport: str):
         """Fetch today's schedule for a sport."""
         now = datetime.now(timezone.utc)
-        base = _BASE_URLS.get(sport)
-        if not base:
-            return
+        base = _base_url(sport)
         url = f"{base}/games/{now.year}/{now.month:02d}/{now.day:02d}/schedule.json"
         data = await self._fetch(url)
         if data:
@@ -117,13 +114,10 @@ class SRPoller:
 
     async def poll_summary(self, game_id: str):
         """Fetch game summary for a specific game."""
-        # Determine sport from cached schedules
         sport = self._sport_for_game(game_id)
         if not sport:
             return
-        base = _BASE_URLS.get(sport)
-        if not base:
-            return
+        base = _base_url(sport)
         url = f"{base}/games/{game_id}/summary.json"
         data = await self._fetch(url)
         if data:
@@ -134,9 +128,7 @@ class SRPoller:
         sport = self._sport_for_game(game_id)
         if not sport:
             return
-        base = _BASE_URLS.get(sport)
-        if not base:
-            return
+        base = _base_url(sport)
         url = f"{base}/games/{game_id}/pbp.json"
         data = await self._fetch(url)
         if data:

@@ -70,8 +70,132 @@
 
 /* ── Scoring play highlight ───────────────────────────────────── */
 .scoring-play {
-    border-left: 3px solid #f59e0b;
-    background: rgba(245, 158, 11, 0.04);
+    border-left: 3px solid #e8611a;
+    background: rgba(232, 97, 26, 0.05);
+}
+
+/* ── Basketball: Hardwood grain texture ──────────────────────── */
+.hardwood {
+    background:
+        repeating-linear-gradient(
+            90deg,
+            rgba(160, 100, 50, 0.06) 0px,
+            rgba(120, 70, 35, 0.08) 2px,
+            rgba(160, 100, 50, 0.04) 4px,
+            rgba(140, 85, 40, 0.07) 6px,
+            rgba(160, 100, 50, 0.05) 8px
+        ),
+        repeating-linear-gradient(
+            87deg,
+            rgba(180, 120, 60, 0.03) 0px,
+            transparent 1px,
+            transparent 12px,
+            rgba(180, 120, 60, 0.03) 13px
+        );
+}
+
+/* ── Basketball: Court lines overlay ─────────────────────────── */
+.court-lines {
+    position: relative;
+}
+.court-lines::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at 50% 100%, transparent 59%, rgba(232, 97, 26, 0.08) 59.5%, rgba(232, 97, 26, 0.08) 60%, transparent 60.5%),
+        radial-gradient(circle at 50% 100%, transparent 29%, rgba(232, 97, 26, 0.06) 29.5%, rgba(232, 97, 26, 0.06) 30%, transparent 30.5%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* ── Basketball: Broadcast-style pill badge ──────────────────── */
+.broadcast-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.broadcast-pill--live {
+    background: rgba(34, 197, 94, 0.15);
+    color: #4ade80;
+    border: 1px solid rgba(34, 197, 94, 0.25);
+}
+.broadcast-pill--final {
+    background: rgba(100, 116, 139, 0.15);
+    color: #94a3b8;
+    border: 1px solid rgba(100, 116, 139, 0.2);
+}
+.broadcast-pill--scheduled {
+    background: rgba(245, 158, 11, 0.15);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+/* ── Basketball: VS badge ────────────────────────────────────── */
+.vs-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #e8611a, #c44d12);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    box-shadow: 0 0 15px rgba(232, 97, 26, 0.25);
+}
+
+/* ── Basketball: Hardwood stripe for card tops ───────────────── */
+.hardwood-stripe {
+    border-top: 3px solid transparent;
+    border-image: repeating-linear-gradient(
+        90deg,
+        #8B5E3C 0px,
+        #A0724B 3px,
+        #6B4226 6px,
+        #8B5E3C 9px,
+        #A0724B 12px
+    ) 3;
+}
+
+/* ── Basketball: Center court divider ────────────────────────── */
+.center-court-line {
+    border: none;
+    border-top: 2px dashed rgba(232, 97, 26, 0.3);
+    margin: 0.5rem 0;
+}
+
+/* ── Basketball: Footer court arc ────────────────────────────── */
+.footer-court-arc {
+    position: relative;
+    overflow: hidden;
+}
+.footer-court-arc::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 100px;
+    border-radius: 0 0 100px 100px;
+    border: 2px solid rgba(232, 97, 26, 0.1);
+    border-top: none;
+    pointer-events: none;
+}
+
+/* ── Basketball icon in scoring plays ────────────────────────── */
+.scoring-play-icon {
+    flex-shrink: 0;
+    margin-top: 0.125rem;
 }
 
 /* ── Global dark scrollbar ────────────────────────────────────── */
