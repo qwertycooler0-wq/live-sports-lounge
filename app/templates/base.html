@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/custom.css">
     <script>
         tailwind.config = {
@@ -23,6 +23,7 @@
                     fontFamily: {
                         sans: ['Inter', 'system-ui', 'sans-serif'],
                         mono: ['JetBrains Mono', 'monospace'],
+                        score: ['Orbitron', 'monospace'],
                     },
                 }
             }
@@ -43,9 +44,20 @@
                 </svg>
                 The Live Sports Lounge
             </a>
-            <div class="flex gap-6 text-sm font-semibold">
+            <div class="flex items-center gap-4 text-sm font-semibold">
                 <a href="/" class="text-gray-300 hover:text-bball transition">Scores</a>
                 <a href="/about" class="text-gray-300 hover:text-bball transition">About</a>
+                <div class="flex items-center gap-1 ml-2">
+                    <button id="sound-toggle" class="text-gray-400 hover:text-bball transition p-1" title="Toggle Sound">
+                        <svg class="icon-sound-on w-5 h-5 hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07"/>
+                        </svg>
+                        <svg class="icon-sound-off w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M11 5L6 9H2v6h4l5 4V5z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>
+                        </svg>
+                    </button>
+                    <input id="volume-slider" type="range" min="0" max="100" value="50" class="w-16 h-1 accent-bball hidden">
+                </div>
             </div>
         </div>
     </nav>
@@ -62,6 +74,7 @@
         </div>
     </footer>
 
+    <script src="/static/js/audio.js"></script>
     {% block scripts %}{% endblock %}
 </body>
 </html>

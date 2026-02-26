@@ -15,3 +15,6 @@ SR_SPORTS = os.getenv("SR_SPORTS", "nba,ncaamb")
 SR_SCHEDULE_INTERVAL = int(os.getenv("SR_SCHEDULE_INTERVAL", "300"))  # seconds
 SR_GAME_INTERVAL = int(os.getenv("SR_GAME_INTERVAL", "120"))  # seconds between live game polls
 SR_DAILY_QUOTA = int(os.getenv("SR_DAILY_QUOTA", "1000"))
+
+# WebSocket relay
+RELAY_SECRET = os.getenv("RELAY_SECRET", "")

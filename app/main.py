@@ -10,7 +10,7 @@ from fastapi.templating import Jinja2Templates
 from . import config
 from .data.mock_provider import MockProvider
 from .data.dsg_provider import DSGProvider
-from .routes import pages, api
+from .routes import pages, api, ws
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(levelname)s %(message)s")
 
@@ -22,10 +22,15 @@ _poller_task: asyncio.Task | None = None
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global _poller_task
-    if config.DATA_SOURCE == "sportradar":
+    if config.DATA_SOURCE == "sportradar" and not config.RELAY_SECRET:
+        # No relay configured — run local poller as before
         from .data.sr_poller import poller
         _poller_task = asyncio.create_task(poller.run())
-        logging.getLogger("main").info("SR background poller started")
+        logging.getLogger("main").info("SR background poller started (no relay)")
+    elif config.DATA_SOURCE == "sportradar" and config.RELAY_SECRET:
+        logging.getLogger("main").info(
+            "Relay mode — SR poller disabled, waiting for relay WebSocket connection"
+        )
     yield
     if _poller_task:
         _poller_task.cancel()
@@ -59,3 +64,4 @@ api.provider = provider
 # ── Routes ──────────────────────────────────────────────────────────
 app.include_router(pages.router)
 app.include_router(api.router, prefix="/api")
+app.include_router(ws.router)

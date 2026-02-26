@@ -198,6 +198,111 @@
     margin-top: 0.125rem;
 }
 
+/* ── LED Score Style ──────────────────────────────────────────── */
+.led-score {
+    font-family: 'Orbitron', monospace;
+    text-shadow: 0 0 10px rgba(255,255,255,0.3), 0 0 20px rgba(255,255,255,0.1);
+}
+
+/* ── Screen Flash ────────────────────────────────────────────── */
+@keyframes edgeFlash {
+    0% { box-shadow: inset 0 0 80px 20px var(--flash-color); }
+    100% { box-shadow: inset 0 0 0 0 transparent; }
+}
+
+/* ── Score Shake ─────────────────────────────────────────────── */
+.score-shake {
+    animation: bigPlay 0.4s cubic-bezier(.36,.07,.19,.97) both;
+}
+@keyframes bigPlay {
+    10%, 90% { transform: translate3d(-1px, 0, 0); }
+    20%, 80% { transform: translate3d(2px, 0, 0); }
+    30%, 50%, 70% { transform: translate3d(-3px, 0, 0); }
+    40%, 60% { transform: translate3d(3px, 0, 0); }
+}
+
+/* ── Confetti ────────────────────────────────────────────────── */
+.confetti-piece {
+    position: absolute;
+    top: -10px;
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    animation: confettiDrop 2s ease-in forwards;
+}
+@keyframes confettiDrop {
+    0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+
+/* ── Clutch Mode ─────────────────────────────────────────────── */
+.clutch-mode {
+    animation: clutchPulse 1s ease-in-out infinite;
+    border-color: rgba(239, 68, 68, 0.5) !important;
+}
+@keyframes clutchPulse {
+    0%, 100% { box-shadow: 0 0 20px rgba(239, 68, 68, 0.2); }
+    50% { box-shadow: 0 0 40px rgba(239, 68, 68, 0.4); }
+}
+
+/* ── Run Banner ──────────────────────────────────────────────── */
+@keyframes slideDown {
+    from { transform: translate(-50%, -100%); opacity: 0; }
+    to   { transform: translate(-50%, 0); opacity: 1; }
+}
+@keyframes slideUp {
+    from { transform: translate(-50%, 0); opacity: 1; }
+    to   { transform: translate(-50%, -100%); opacity: 0; }
+}
+
+/* ── PBP Slide In ────────────────────────────────────────────── */
+.pbp-new {
+    animation: slideIn 0.3s ease-out;
+}
+@keyframes slideIn {
+    from { opacity: 0; transform: translateX(-20px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ── PBP Play Type Highlights ────────────────────────────────── */
+.pbp-three {
+    border-left: 3px solid #f59e0b !important;
+    background: rgba(245, 158, 11, 0.08) !important;
+}
+.pbp-dunk {
+    border-left: 3px solid #ef4444 !important;
+    background: rgba(239, 68, 68, 0.06) !important;
+}
+.pbp-block {
+    border-left: 3px solid #8b5cf6 !important;
+    background: rgba(139, 92, 246, 0.06) !important;
+}
+.pbp-steal {
+    border-left: 3px solid #22c55e !important;
+    background: rgba(34, 197, 94, 0.06) !important;
+}
+
+/* ── Dynamic Background Glow ─────────────────────────────────── */
+#game-container {
+    --bg-hue: 220;
+    --bg-intensity: 0;
+    background: radial-gradient(ellipse at center,
+        hsla(var(--bg-hue), 50%, 15%, var(--bg-intensity)) 0%, transparent 70%);
+    transition: background 1s ease;
+}
+
+/* ── Pulse Timeline Bars ─────────────────────────────────────── */
+.pulse-bar {
+    border-radius: 2px 2px 0 0;
+    min-height: 2px;
+    transition: height 0.3s ease;
+}
+
+/* ── Momentum Dot ────────────────────────────────────────────── */
+#momentum-dot {
+    transition: left 0.7s ease;
+}
+
 /* ── Global dark scrollbar ────────────────────────────────────── */
 ::-webkit-scrollbar {
     width: 8px;

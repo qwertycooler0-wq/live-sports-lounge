@@ -42,7 +42,7 @@
             <div class="grid grid-cols-3 items-center text-center">
                 <div>
                     <div class="text-lg font-bold text-gray-300">{{ game.summary.away_team }}</div>
-                    <div id="away-score" class="text-5xl font-mono font-bold text-white mt-1">{{ game.summary.away_score }}</div>
+                    <div id="away-score" class="text-5xl led-score font-bold text-white mt-1">{{ game.summary.away_score }}</div>
                 </div>
                 <div class="flex flex-col items-center gap-2">
                     <!-- Basketball hoop SVG -->
@@ -56,10 +56,29 @@
                 </div>
                 <div>
                     <div class="text-lg font-bold text-gray-300">{{ game.summary.home_team }}</div>
-                    <div id="home-score" class="text-5xl font-mono font-bold text-white mt-1">{{ game.summary.home_score }}</div>
+                    <div id="home-score" class="text-5xl led-score font-bold text-white mt-1">{{ game.summary.home_score }}</div>
                 </div>
             </div>
+
+            <!-- Momentum meter -->
+            <div class="flex items-center gap-2 mt-4 px-4">
+                <span class="text-[10px] text-red-400 font-bold uppercase">{{ game.summary.away_team.split()[-1][:3] }}</span>
+                <div class="flex-1 h-1.5 bg-dark-lighter rounded-full relative">
+                    <div id="momentum-dot" class="absolute h-1.5 w-3 bg-white rounded-full" style="left:50%"></div>
+                </div>
+                <span class="text-[10px] text-blue-400 font-bold uppercase">{{ game.summary.home_team.split()[-1][:3] }}</span>
+            </div>
         </div>
+    </div>
+
+    <!-- Pulse Timeline -->
+    <div id="pulse-timeline" class="h-10 bg-surface rounded-lg border border-white/5 mb-4 flex items-end gap-px px-2 overflow-hidden"></div>
+
+    <!-- Effect overlays -->
+    <div id="screen-flash" class="fixed inset-0 pointer-events-none z-50"></div>
+    <div id="confetti-container" class="fixed inset-0 pointer-events-none z-40 overflow-hidden"></div>
+    <div id="run-banner" class="fixed top-20 left-1/2 -translate-x-1/2 z-50 hidden bg-dark/90 border-2 border-bball rounded-xl px-6 py-3 shadow-2xl">
+        <span id="run-text" class="text-xl font-extrabold text-white tracking-wide"></span>
     </div>
 
     <!-- Tabs -->
@@ -238,5 +257,6 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="/static/js/effects.js"></script>
 <script src="/static/js/game.js"></script>
 {% endblock %}
