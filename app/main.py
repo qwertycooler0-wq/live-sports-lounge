@@ -1,4 +1,3 @@
-import asyncio
 import logging
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -14,30 +13,16 @@ from .routes import pages, api, ws
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(levelname)s %(message)s")
 
-# ── Lifespan (manages background poller) ─────────────────────────
-
-_poller_task: asyncio.Task | None = None
+# ── Lifespan ─────────────────────────────────────────────────────
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    global _poller_task
-    if config.DATA_SOURCE == "sportradar" and not config.RELAY_SECRET:
-        # No relay configured — run local poller as before
-        from .data.sr_poller import poller
-        _poller_task = asyncio.create_task(poller.run())
-        logging.getLogger("main").info("SR background poller started (no relay)")
-    elif config.DATA_SOURCE == "sportradar" and config.RELAY_SECRET:
+    if config.DATA_SOURCE == "sportradar":
         logging.getLogger("main").info(
-            "Relay mode — SR poller disabled, waiting for relay WebSocket connection"
+            "Relay mode — waiting for relay WebSocket connection"
         )
     yield
-    if _poller_task:
-        _poller_task.cancel()
-        try:
-            await _poller_task
-        except asyncio.CancelledError:
-            pass
 
 
 app = FastAPI(title="The Live Sports Lounge", lifespan=lifespan)

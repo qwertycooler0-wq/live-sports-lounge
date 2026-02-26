@@ -1,5 +1,4 @@
 (function () {
-    const POLL_INTERVAL = 3000;
     const RECONNECT_DELAY = 3000;
     const container = document.getElementById("game-container");
     if (!container) return;
@@ -12,9 +11,7 @@
     let lastEventId = -1;
     let runTracker = { team: null, points: 0 };
     let momentumEvents = []; // { team, points, time }
-    let pollTimer = null;
     let ws = null;
-    let wsConnected = false;
 
     // ── Tab switching ──────────────────────────────────────────────
     document.querySelectorAll(".tab-btn").forEach(btn => {
@@ -210,7 +207,7 @@
         }
     }
 
-    // ── Shared game data handler (used by both WS and HTTP) ───────
+    // ── Game data handler ────────────────────────────────────────
 
     function handleGameData(data) {
         const s = data.summary;
@@ -309,31 +306,6 @@
         }
     }
 
-    // ── HTTP polling (fallback) ──────────────────────────────────
-
-    async function refresh() {
-        try {
-            const res = await fetch(`/api/game/${gameId}`);
-            if (!res.ok) return;
-            const data = await res.json();
-            handleGameData(data);
-        } catch (e) {
-            // silent
-        }
-    }
-
-    function startPolling() {
-        if (pollTimer) return;
-        pollTimer = setInterval(refresh, POLL_INTERVAL);
-    }
-
-    function stopPolling() {
-        if (pollTimer) {
-            clearInterval(pollTimer);
-            pollTimer = null;
-        }
-    }
-
     // ── WebSocket connection ─────────────────────────────────────
 
     function connectWS() {
@@ -341,8 +313,6 @@
         ws = new WebSocket(`${proto}//${location.host}/ws/live`);
 
         ws.onopen = function () {
-            wsConnected = true;
-            stopPolling();
             ws.send(JSON.stringify({ type: "subscribe", topic: `game:${gameId}` }));
         };
 
@@ -358,9 +328,7 @@
         };
 
         ws.onclose = function () {
-            wsConnected = false;
             ws = null;
-            startPolling();
             setTimeout(connectWS, RECONNECT_DELAY);
         };
 
@@ -369,9 +337,5 @@
         };
     }
 
-    // ── Initialize: HTTP for immediate data, WS for real-time ────
-
-    refresh();
-    startPolling();
     connectWS();
 })();

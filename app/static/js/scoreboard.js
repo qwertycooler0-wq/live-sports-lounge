@@ -1,15 +1,10 @@
 (function () {
-    const POLL_INTERVAL = 5000;
     const RECONNECT_DELAY = 3000;
     const sport = new URLSearchParams(window.location.search).get("sport") || "all";
 
     // Track previous scores for flash detection
     const prevScores = {};
-    let pollTimer = null;
     let ws = null;
-    let wsConnected = false;
-
-    // ── Shared update logic (used by both WS and HTTP) ───────────
 
     function updateScoreboard(games) {
         games.forEach(g => {
@@ -53,31 +48,6 @@
         });
     }
 
-    // ── HTTP polling (fallback) ──────────────────────────────────
-
-    async function refresh() {
-        try {
-            const res = await fetch(`/api/scoreboard?sport=${sport}`);
-            if (!res.ok) return;
-            const data = await res.json();
-            updateScoreboard(data.games);
-        } catch (e) {
-            // silent — retry next interval
-        }
-    }
-
-    function startPolling() {
-        if (pollTimer) return;
-        pollTimer = setInterval(refresh, POLL_INTERVAL);
-    }
-
-    function stopPolling() {
-        if (pollTimer) {
-            clearInterval(pollTimer);
-            pollTimer = null;
-        }
-    }
-
     // ── WebSocket connection ─────────────────────────────────────
 
     function connectWS() {
@@ -85,8 +55,6 @@
         ws = new WebSocket(`${proto}//${location.host}/ws/live`);
 
         ws.onopen = function () {
-            wsConnected = true;
-            stopPolling();
             ws.send(JSON.stringify({ type: "subscribe", topic: "scoreboard" }));
         };
 
@@ -102,9 +70,7 @@
         };
 
         ws.onclose = function () {
-            wsConnected = false;
             ws = null;
-            startPolling();
             setTimeout(connectWS, RECONNECT_DELAY);
         };
 
@@ -113,9 +79,5 @@
         };
     }
 
-    // ── Initialize: HTTP for immediate data, WS for real-time ────
-
-    refresh();
-    startPolling();
     connectWS();
 })();
