@@ -11,6 +11,10 @@ from ..realtime import manager
 log = logging.getLogger("ws")
 router = APIRouter()
 
+# Startup diagnostic
+_configured = bool(config.RELAY_SECRET)
+log.warning("WS routes loaded — RELAY_SECRET configured: %s (len=%d)", _configured, len(config.RELAY_SECRET))
+
 
 @router.websocket("/ws/relay")
 async def ws_relay(ws: WebSocket, secret: str = Query("")):
@@ -18,7 +22,10 @@ async def ws_relay(ws: WebSocket, secret: str = Query("")):
     if not config.RELAY_SECRET or secret != config.RELAY_SECRET:
         await ws.accept()
         await ws.close(code=4001, reason="unauthorized")
-        log.warning("Relay auth failed (secret %s)", "not configured" if not config.RELAY_SECRET else "mismatch")
+        log.warning(
+            "Relay auth failed — configured=%s, server_len=%d, client_len=%d, match=%s",
+            bool(config.RELAY_SECRET), len(config.RELAY_SECRET), len(secret), secret == config.RELAY_SECRET,
+        )
         return
 
     await ws.accept()
