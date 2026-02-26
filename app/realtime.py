@@ -36,10 +36,12 @@ class ConnectionManager:
             self._relay_connected_at = time.time()
         log.info("Relay connected")
 
-    async def disconnect_relay(self):
+    async def disconnect_relay(self, ws: WebSocket):
         async with self._lock:
-            self.relay_ws = None
-        log.info("Relay disconnected")
+            if self.relay_ws is ws:
+                self.relay_ws = None
+                log.info("Relay disconnected")
+            # else: a newer relay already replaced this one — don't clear it
 
     @property
     def relay_is_connected(self) -> bool:

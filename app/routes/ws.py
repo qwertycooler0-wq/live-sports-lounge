@@ -16,7 +16,9 @@ router = APIRouter()
 async def ws_relay(ws: WebSocket, secret: str = Query("")):
     """Authenticated endpoint for the local relay script."""
     if not config.RELAY_SECRET or secret != config.RELAY_SECRET:
+        await ws.accept()
         await ws.close(code=4001, reason="unauthorized")
+        log.warning("Relay auth failed (secret %s)", "not configured" if not config.RELAY_SECRET else "mismatch")
         return
 
     await ws.accept()
@@ -31,7 +33,7 @@ async def ws_relay(ws: WebSocket, secret: str = Query("")):
     except Exception:
         log.exception("Relay WebSocket error")
     finally:
-        await manager.disconnect_relay()
+        await manager.disconnect_relay(ws)
 
 
 @router.websocket("/ws/live")
